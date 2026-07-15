@@ -2,9 +2,9 @@
 
 A Google Sheets expense dashboard for the three projects under development:
 
-1. **Aqua Bot**
-2. **IC Tester**
-3. **CPS Training Kit**
+1. **Aqua Bot** — funded (₹2,00,000 grant)
+2. **IC Tester** — no budget yet
+3. **CPS Training Kit** — no budget yet
 
 Everything is generated automatically by one Apps Script —
 [`apps-script/dashboard_builder.gs`](apps-script/dashboard_builder.gs).
@@ -14,14 +14,14 @@ You never build the sheets by hand.
 
 | Sheet | Purpose |
 |---|---|
-| **Dashboard** | Company-wide overview: KPI tiles (Total Budget / Utilized / Remaining / % Utilized), a per-project summary table with usage bars, monthly spend table, and 3 charts (Budget vs Utilized, Spend Share by Project, Monthly Spend by Project). |
-| **\<Project\> - Expenses** ×3 | The expense log where you enter data. Columns: Date, Description, Category (dropdown), Vendor, Invoice No., Amount, Payment Mode (dropdown), Paid By, Notes. |
-| **\<Project\> - Fund Utilization** ×3 | Budget vs actuals per category: you type the **Allocated Budget** per category (yellow cells); Utilized / Remaining / % Utilized and the usage bars calculate themselves from the expense log. Also has a monthly spend table, a category pie chart, and a monthly column chart. |
-| **Lists** (hidden) | Sources for the Category / Payment Mode dropdowns. |
+| **Dashboard** | KPI tiles: Funding Received, Total Spent, Account Balance, % of Funds Used. Per-project table (funding / spent / balance / usage bar), monthly spend table, and 3 charts (Funding vs Spent, Spend Share by Project, Monthly Spend). |
+| **Funding** | Money received — pre-filled with the ₹2,00,000 Aqua Bot grant. Add a row whenever new funds come in (date, source, project, amount). |
+| **\<Project\> - Expenses** ×3 | The simple expense log you asked for: **Si No (auto-numbers itself), Date, Particulars of Expenditure, Amount, Remarks.** The Aqua Bot sheet is pre-loaded with the 16 expenditures already incurred (₹93,469.96). |
+| **Aqua Bot - Utilization Certificate** | Print-ready UC in the standard format — Si No / Particulars of Expenditure / Amount (₹), with **Total Expenditure** and **Balance Amount (if any)** rows — generated from the expense log. A UC is created automatically for every project that has funding recorded. |
 
-Everything is formula-driven: **you only ever type into the Expenses sheets and
-the yellow "Allocated Budget" cells** — every dashboard, chart, and utilization
-figure updates by itself.
+You only ever type into the **Funding** sheet and the **Expenses** sheets.
+The Dashboard recalculates by itself; the Utilization Certificate is refreshed
+from the menu.
 
 ## Setup (one time, ~2 minutes)
 
@@ -34,23 +34,27 @@ figure updates by itself.
 5. Google asks for authorization the first time — choose your account →
    *Advanced → Go to (project) → Allow*. (The script only touches this one
    spreadsheet.)
-6. Switch back to the spreadsheet tab — all 8 sheets are generated.
+6. Switch back to the spreadsheet tab — all sheets are generated.
 
-After the first run, a **⚙ Dashboard Tools** menu also appears inside the
-spreadsheet with a *Build / Rebuild all sheets* option.
-⚠️ Rebuilding erases and regenerates the sheets (it asks for confirmation first).
+After the first run a **⚙ Dashboard Tools** menu appears inside the spreadsheet:
+
+- **Build / Rebuild all sheets** — regenerates everything
+  (⚠️ erases entered data; it asks for confirmation first).
+- **Refresh Utilization Certificates** — regenerates the UC sheet(s) from the
+  current expense log. Run this after adding expenses, before printing/sharing a UC.
 
 ## Using it day-to-day
 
-- **Log an expense:** open the project's `- Expenses` sheet and add a row.
-  Use the dropdowns for Category and Payment Mode so the utilization math stays accurate.
-- **Set budgets:** on each `- Fund Utilization` sheet, fill in the yellow
-  *Allocated Budget* column for each category.
-- **Delete the sample rows:** each Expenses sheet ships with 3 sample rows
-  (marked "Sample row — delete") so the charts render immediately — remove them
-  and the pre-filled sample budgets before real use.
-- **Read the dashboard:** the % Utilized cells turn amber above 75% and red
-  above 100% of budget, on both the Dashboard and each Fund Utilization sheet.
+- **Log an expense:** open the project's `- Expenses` sheet, enter Date,
+  Particulars, and Amount on the next row. The Si No numbers itself.
+- **Record funds received:** add a row on the **Funding** sheet. Projects with
+  funding automatically get balance tracking, usage bars, and a UC sheet.
+- **Produce a UC:** ⚙ Dashboard Tools → *Refresh Utilization Certificates*,
+  then print or download that sheet as PDF (File → Download → PDF, or
+  File → Print with "Current sheet").
+- The pre-loaded Aqua Bot entries have no dates (the source record didn't
+  include them). Totals and the UC are unaffected; add dates when known and
+  the monthly-spend chart will pick them up.
 
 ## Customizing
 
@@ -58,12 +62,12 @@ All configuration is at the top of `dashboard_builder.gs`:
 
 | Constant | What it controls |
 |---|---|
-| `PROJECTS` | Project names — add/remove projects here and rebuild; expense + utilization sheets and all dashboard rows/charts adapt automatically. |
-| `CATEGORIES` | Expense categories (dropdown + utilization rows). |
-| `PAYMENT_MODES` | Payment mode dropdown options. |
-| `CURRENCY_FORMAT` | Default `₹#,##0` — change to `$#,##0.00` etc. |
-| `FY_START_MONTH` | First month of the monthly tables. Default `3` (April, Indian FY); use `0` for January. |
+| `PROJECTS` | Project names — add/remove and rebuild; sheets, dashboard rows, and charts adapt. |
+| `INITIAL_FUNDING` | Funding rows seeded on first build (currently the ₹2 L Aqua Bot grant). |
+| `AQUABOT_EXPENSES` | The pre-loaded Aqua Bot expenditure rows. |
+| `CURRENCY_FORMAT` | Default `₹#,##0.00`. |
+| `FY_START_MONTH` | First month of the monthly table. Default `3` (April, Indian FY); `0` for January. |
 
 After editing constants, run **⚙ Dashboard Tools → Build / Rebuild all sheets**.
-(Rebuild wipes entered data, so customize before you start entering real expenses,
-or copy your rows out first.)
+(Rebuild wipes entered data, so customize before entering real expenses, or
+copy your rows out first.)
