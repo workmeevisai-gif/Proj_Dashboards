@@ -215,7 +215,8 @@ function buildExpenseSheet(ss, project) {
     siFormulas.push(['=IF($C' + r + '<>"",COUNTA($C$2:$C' + r + '),"")']);
   }
   sh.getRange(2, 1, dataRows, 1).setFormulas(siFormulas)
-    .setHorizontalAlignment('center').setFontColor('#6b7280');
+    .setHorizontalAlignment('center').setFontColor('#6b7280')
+    .setNumberFormat('0'); // plain number — otherwise Sheets can render 1, 2, 3 as dates
 
   sh.getRange(2, 2, dataRows, 1).setNumberFormat(DATE_FORMAT);
   sh.getRange(2, 4, dataRows, 1).setNumberFormat(CURRENCY_FORMAT);
